@@ -82,14 +82,6 @@ def main():
         zero_positions[motor_id] = dxl_present_position  # Store initial position as zero
         print(f"Motor {motor_id}: {initial_angle:.2f} degrees (set as zero)")
 
-    # Special handling for motor 19
-    if 19 in zero_positions:
-        motor_19_zero = zero_positions[19]
-        print(f"Motor 19 raw zero position: {motor_19_zero}")
-        if motor_19_zero > 3000 or motor_19_zero < 1000:
-            print("Adjusting motor 19 zero position to midpoint (2048)")
-            zero_positions[19] = 2048  # Set to the middle of the range for safety
-
     # Main loop for monitoring and commanding motors
     try:
         while True:
@@ -150,6 +142,9 @@ def main():
                     print(f"Error setting goal position for motor {motor_id}: {packet_handler.getRxPacketError(dxl_error)}")
                 else:
                     print(f"Motor {motor_id} moving to {desired_angle:.2f} degrees")
+
+                # Delay to allow motors to reach their target positions
+                time.sleep(0.5)
             except ValueError:
                 print("Invalid command format. Use '[motor_id] [desired_angle]'.")
     finally:
